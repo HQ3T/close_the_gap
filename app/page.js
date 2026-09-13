@@ -217,6 +217,10 @@ function Navbar({ view, setView, theme, onToggleTheme }) {
           </button>
         </nav>
 
+
+
+        {/* laöksjdf */}
+
         <div className="navbar-meta">
           <button
             className="theme-toggle"
