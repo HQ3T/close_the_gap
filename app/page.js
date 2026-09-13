@@ -213,7 +213,7 @@ function Navbar({ view, setView, theme, onToggleTheme }) {
             onClick={() => setView('billion')}
             aria-current={view === 'billion' ? 'page' : undefined}
           >
-            <span>03</span>The $1bn question
+            <span>03</span><span className="tab-full">The $1bn question</span><span className="tab-mobile">$1bn question</span>
           </button>
         </nav>
 
@@ -276,12 +276,9 @@ function Portfolio({ selectedId, setSelectedId }) {
         <div className="eyebrow"><span className="eyebrow-line" /> Impact portfolio / v1.0</div>
         <h1>Damage we could<br /><em>leave behind.</em></h1>
 
-
         <p className="hero-copy">
-          A focused research portfolio built around one strictly comparable metric: <strong>avoidable CO₂e per year</strong>.
+          We measure the emissions big companies could eliminate right now using technology that already exists.
         </p>
-
-
 
         <div className="hero-actions">
           <button className="primary" onClick={() => document.getElementById('case-list')?.scrollIntoView({ behavior: 'smooth' })}>
@@ -291,19 +288,19 @@ function Portfolio({ selectedId, setSelectedId }) {
           <div className="hero-stepper" aria-label="Method sequence">
             <div className="step-card">
               <span className="step-num">01</span>
-              <span className="step-label">Select burden</span>
+              <span className="step-label">What leaks today</span>
             </div>
             <span className="step-arrow" aria-hidden="true">→</span>
             <div className="step-card">
               <span className="step-num">02</span>
-              <span className="step-label">Test alternative</span>
+              <span className="step-label">Proven alternative</span>
             </div>
             <span className="step-arrow" aria-hidden="true">→</span>
             <div className="step-card highlighted">
               <div className="step-highlight-tag">Valuation payoff</div>
               <div className="step-highlight-main">
                 <span className="step-num">03</span>
-                <strong>Price the gap</strong>
+                <strong>The avoidable gap</strong>
               </div>
               <span className="step-badge">${valuation.toFixed(2)} / tCO₂e</span>
             </div>
@@ -363,14 +360,43 @@ function Portfolio({ selectedId, setSelectedId }) {
       <section className="portfolio-layout">
         <div className="case-list">
           {visibleCases.map((item, index) => (
-            <CaseCard key={item.id} item={item} index={index} selected={item.id === selected.id} onClick={() => setSelectedId(item.id)} />
+            <CaseCard
+              key={item.id}
+              item={item}
+              index={index}
+              selected={item.id === selected.id}
+              onClick={() => {
+                setSelectedId(item.id);
+                if (typeof window !== 'undefined' && window.innerWidth <= 860) {
+                  document.getElementById('detail-card-anchor')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+              }}
+            />
           ))}
           <div className="list-note">
             <span>i</span>
             <p>Percentages describe each case’s activity boundary. Normalized blocks are not whole-company totals and cases should not be summed.</p>
           </div>
         </div>
-        <CaseDetail item={selected} coverage={selectedCoverage} setCoverage={setCoverage} result={selectedResult} />
+
+        <div className="detail-wrapper" id="detail-card-anchor">
+          <div className="mobile-case-strip" aria-label="Quick select company">
+            <span className="mobile-strip-label">Quick select:</span>
+            <div className="mobile-pill-scroll">
+              {cases.map((c) => (
+                <button
+                  key={c.id}
+                  className={`mobile-case-pill ${c.id === selected.id ? 'active' : ''}`}
+                  onClick={() => setSelectedId(c.id)}
+                >
+                  <span className={`company-mark-mini ${c.hue}`}>{c.mark}</span>
+                  <span>{c.name}</span>
+                </button>
+              ))}
+            </div>
+          </div>
+          <CaseDetail item={selected} coverage={selectedCoverage} setCoverage={setCoverage} result={selectedResult} />
+        </div>
       </section>
     </>
   );
@@ -524,7 +550,7 @@ function Method() {
         <div className="eyebrow"><span className="eyebrow-line" /> The method</div>
         <h1>Keep the claim<br /><em>inside the evidence.</em></h1>
         <p className="hero-copy">
-          The gap is not an arbitrary rating. It is one strictly audited metric: the company’s reported source emissions translated through an alternative technology intensity and explicit coverage.
+          Take the real reported emissions. Apply a proven commercial alternative. Calculate what's avoidable. No unverified estimates.
         </p>
       </section>
 
@@ -542,10 +568,10 @@ function Method() {
 
       <section className="method-grid">
         {[
-          ['01', 'Company source', 'Start with a reported annual emissions source tied directly to the activity being changed. Never use total corporate footprint as a proxy.'],
-          ['02', 'Alternative intensity', 'Identify a proven commercial technology that delivers identical service and calculate emissions per matching unit.'],
-          ['03', 'Coverage', 'Model only newly converted, eligible equipment. Treat coverage as a tested parameter, never an unverified assumption.'],
-          ['04', 'Net boundary', 'Subtract added burdens and display excluded lifecycle effects prominently. All gross results are explicitly labeled.']
+          ['01', 'Reported source', 'Start with a verified annual source. Never multiply a percentage against a whole corporate footprint.'],
+          ['02', 'Proven alternative', 'Match an existing commercial technology that delivers the exact same service with less harm.'],
+          ['03', 'Tested adoption', 'Model 25%, 50%, or 100% rollout as explicit tested assumptions, never assumed certainty.'],
+          ['04', 'Net boundary', 'Subtract added electricity and equipment burdens. Disclose all lifecycle exclusions openly.']
         ].map(([number, title, body]) => (
           <div className="method-card" key={number}>
             <span className="step-no">{number}</span>
@@ -660,7 +686,7 @@ function BillionDollarQuestion({ onSelectCase }) {
         <div className="eyebrow"><span className="eyebrow-line" /> The billion-dollar question</div>
         <h1>Fund the change.<br /><em>Bring the capital back.</em></h1>
         <p className="hero-copy">
-          The score is a starting point for finding projects. The investment decision asks which improvements our funding can enable—and how the principal can be repaid.
+          The score finds the opportunity. The investment decision asks: which hardware can we fund—and how does the loan get repaid?
         </p>
       </section>
 
@@ -669,16 +695,16 @@ function BillionDollarQuestion({ onSelectCase }) {
           <div className="mandate-badge"><span className="status-dot" /> The mandate</div>
           <div className="mandate-head">$1,000,000,000</div>
           <p className="mandate-copy">
-            Prioritize measurable additional impact while seeking to recover principal. No allocation is invented here: project costs, deployment constraints and repayable cashflows still need underwriting.
+            Prioritize measurable emissions reduction while seeking to recover capital. Project costs, installation constraints, and repayable cashflows still need underwriting.
           </p>
         </div>
       </section>
 
       <div className="mandate-steps-grid">
         {[
-          ['01', 'Find a shared problem', 'Aggregate intervention types, not overlapping company inventories. Refrigerant replacement, methane recovery and industrial controls each point to different deployment needs.'],
-          ['02', 'Finance the bottleneck', 'Equipment loans, retrofit finance and installation capacity may deploy established technology. Startup equity adds technology, execution and capital-loss risk; it does not promise principal recovery.'],
-          ['03', 'Verify impact and repayment', 'Confirm asset eligibility, lifecycle savings, incremental adoption, implementation cost, savings or contracted revenue, and repayment timing before committing capital.']
+          ['01', 'Find a shared problem', 'Aggregate equipment needs across companies. Refrigerant replacement, methane recovery, and industrial controls each have distinct deployment needs.'],
+          ['02', 'Finance the bottleneck', 'Equipment loans, retrofit finance, and installation capacity deploy established tech. Startup equity adds loss risk without promising principal recovery.'],
+          ['03', 'Verify impact & repayment', 'Confirm asset eligibility, lifecycle savings, installation costs, and repayment timing before committing capital.']
         ].map(([num, title, body]) => (
           <div className="step-panel" key={num}>
             <span className="step-panel-num">{num}</span>
@@ -731,7 +757,7 @@ function BillionDollarQuestion({ onSelectCase }) {
           <div className="notice-content">
             <strong>Underwriting rule</strong>
             <p>
-              Avoided societal damage is not cashflow. A project can have substantial environmental value and still lack a way to repay a loan. Impact per dollar, additionality and capital recovery must each be assessed separately.
+              Avoided societal damage is not cashflow. Environmental value alone cannot repay a loan. Capital recovery, additionality, and verified savings must each be underwritten separately.
             </p>
           </div>
         </div>
