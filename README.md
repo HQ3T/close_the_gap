@@ -13,7 +13,7 @@ The app presents five S&P 500 company cases in a compact portfolio:
 | Scale scenario | Walmart, ExxonMobil | A reported source is combined with an explicit eligible-and-converted coverage assumption. |
 | Benchmark block | Microsoft, UPS, Delta Air Lines | A matched external study quantifies a process gap, but public data does not support a company-wide denominator. |
 
-Each case keeps six things together: the existing burden, the alternative technology, the quantified gap, the formula, the accounting boundary, and the next evidence request. Source links are shown directly in the case detail panel.
+Each case keeps six things together: the existing burden, the alternative technology, the quantified gap, the formula, the accounting boundary, and the next evidence request. Source links are shown directly in the case detail panel. The comparable ranking uses one unit only: **avoidable tCO₂e/year**. A case without a defensible company-specific annual denominator stays in the evidence queue and is not assigned a fake annual number.
 
 This is a research and investment-sourcing prototype, not an ESG ranking, an emissions audit, a forecast, or an investment recommendation. Normalized benchmark blocks must not be added to company totals.
 

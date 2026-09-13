@@ -4,13 +4,15 @@ Snapshot: **13 September 2026**. The entries below are the compact source-to-num
 
 ## Portfolio overview
 
-| Company | Existing case | Alternative | Displayed result | Status |
+| Company | Existing case | Alternative | Avoidable CO₂e/year | Status |
 | --- | --- | --- | --- | --- |
 | Walmart (WMT) | 4.08m tCO₂e/year onsite refrigerants | Lower-impact CO₂ refrigeration | 2.04m tCO₂e/year at 50% source coverage | Conditional scale scenario |
 | ExxonMobil (XOM) | ≈203k tCO₂e/year inferred tank methane source pool | Vapor recovery units | 87.6k tCO₂e/year at 50% eligible coverage | Conditional scale scenario |
-| Microsoft (MSFT) | 1,000 matched baseline lifecycle tonnes | Direct-to-chip cold plates | 150 tCO₂e per 1,000 baseline tonnes | Normalized benchmark |
-| UPS (UPS) | 1,414.93 gCO₂e/mile diesel benchmark | Battery-electric delivery trucks | 463.54 tCO₂e per 1,000 baseline tonnes | Normalized benchmark |
-| Delta Air Lines (DAL) | 1,000 matched gate lifecycle tonnes | Electric ground power + preconditioned air | 630 tCO₂e per 1,000 baseline tonnes | Normalized low-end benchmark |
+| Microsoft (MSFT) | 1,000 matched baseline lifecycle tonnes | Direct-to-chip cold plates | Pending — company cooling-service denominator needed | Evidence queue |
+| UPS (UPS) | 1,414.93 gCO₂e/mile diesel benchmark | Battery-electric delivery trucks | Pending — route-matched annual miles needed | Evidence queue |
+| Delta Air Lines (DAL) | 1,000 matched gate lifecycle tonnes | Electric ground power + preconditioned air | Pending — eligible annual gate throughput needed | Evidence queue |
+
+Only the Walmart and ExxonMobil rows currently qualify for the comparable annual ranking. The other three retain their normalized study signals in the app so they can guide diligence without being mistaken for company-scale annual opportunities.
 
 ## Walmart — refrigerant leakage
 

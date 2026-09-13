@@ -13,6 +13,7 @@ const cases = [
     sector: 'Retail',
     hue: 'blue',
     type: 'Scale scenario',
+    metricStatus: 'rankable',
     confidence: 'High technical signal',
     activity: 'Refrigerant leakage',
     existing: 'Onsite refrigerant leaks from the cooling systems that keep stores and distribution centers cold.',
@@ -21,6 +22,9 @@ const cases = [
     technology: 'Lower-impact CO₂ refrigeration',
     techReason: 'A paired supermarket study observed 191 tCO₂e versus 0.1 tCO₂e at equal leaked mass when comparing HFC and CO₂ systems.',
     defaultCoverage: 50,
+    annualSource: 'Reported onsite refrigerant emissions',
+    currentIntensity: '1.00 × current refrigerant burden',
+    alternativeIntensity: '0.00052 × current burden on converted source',
     reduction: 99.95,
     result: (coverage) => 4080000 * (coverage / 100) * (1 - 0.1 / 191),
     resultUnit: 'tCO₂e / year',
@@ -41,6 +45,7 @@ const cases = [
     sector: 'Energy',
     hue: 'red',
     type: 'Scale scenario',
+    metricStatus: 'rankable',
     confidence: 'Conditional source pool',
     activity: 'Upstream tank methane',
     existing: 'Methane can escape from upstream storage tanks before it is captured, sold or combusted.',
@@ -49,6 +54,9 @@ const cases = [
     technology: 'Vapor recovery units',
     techReason: 'EPA guidance gives a 95% control factor for suitable vapor-recovery sources. Recovered methane is assumed to be burned, so its resulting CO₂ remains in the calculation.',
     defaultCoverage: 50,
+    annualSource: 'Derived upstream tank methane source pool',
+    currentIntensity: '29.8 tCO₂e / tCH₄',
+    alternativeIntensity: '2.75 tCO₂e / tCH₄ after combustion',
     reduction: 86.23,
     result: (coverage) => 6816 * (coverage / 100) * 0.95 * (29.8 - 2.75),
     resultUnit: 'tCO₂e / year',
@@ -70,6 +78,7 @@ const cases = [
     sector: 'Technology',
     hue: 'green',
     type: 'Benchmark block',
+    metricStatus: 'needs-denominator',
     confidence: 'Study-matched',
     activity: 'Data-center cooling',
     existing: 'Cooling loads grow with compute density; conventional cooling can carry avoidable energy and lifecycle impact.',
@@ -78,6 +87,8 @@ const cases = [
     technology: 'Direct-to-chip cold plates',
     techReason: 'A Nature lifecycle study models 15% lower climate impact for equivalent virtual-core service with cold-plate cooling under its stated assumptions.',
     defaultCoverage: 100,
+    benchmarkResult: '150 tCO₂e / 1,000 baseline tonnes',
+    annualizationGap: 'Microsoft’s eligible cooling-service volume is not disclosed.',
     reduction: 15,
     result: () => 150,
     resultUnit: 'tCO₂e / 1,000 baseline tonnes',
@@ -99,6 +110,7 @@ const cases = [
     sector: 'Logistics',
     hue: 'gold',
     type: 'Benchmark block',
+    metricStatus: 'needs-denominator',
     confidence: 'External fleet analogue',
     activity: 'Urban delivery electrification',
     existing: 'Diesel delivery vehicles burn fuel on repetitive urban routes where depot charging and electric drivetrains are increasingly deployable.',
@@ -107,6 +119,8 @@ const cases = [
     technology: 'Battery-electric delivery trucks',
     techReason: 'An NREL field evaluation measured 759.06 gCO₂e/mile for an electric delivery fleet versus 1,414.93 for diesel under its historical local-grid assumptions.',
     defaultCoverage: 100,
+    benchmarkResult: '464 tCO₂e / 1,000 baseline tonnes',
+    annualizationGap: 'UPS’s still-diesel, route-matched eligible miles are not disclosed.',
     reduction: 46.35,
     result: () => 463.54,
     resultUnit: 'tCO₂e / 1,000 baseline tonnes',
@@ -128,6 +142,7 @@ const cases = [
     sector: 'Airlines',
     hue: 'rose',
     type: 'Benchmark block',
+    metricStatus: 'needs-denominator',
     confidence: 'Low-end study case',
     activity: 'Aircraft gate power + cooling',
     existing: 'Aircraft can burn fuel at the gate for electricity and cooling while waiting for a ground connection.',
@@ -136,6 +151,8 @@ const cases = [
     technology: 'Electric ground power + preconditioned air',
     techReason: 'A gate-electrification lifecycle study compares partly electrified current practice with electric power and cooling throughout, finding a 63–97% reduction range.',
     defaultCoverage: 100,
+    benchmarkResult: '630 tCO₂e / 1,000 baseline tonnes',
+    annualizationGap: 'Delta’s remaining eligible gate-turnaround volume is not disclosed.',
     reduction: 63,
     result: () => 630,
     resultUnit: 'tCO₂e / 1,000 baseline tonnes',
@@ -194,7 +211,7 @@ function Portfolio({ selectedId, setSelectedId }) {
   const [filter, setFilter] = useState('all');
   const [coverage, setCoverage] = useState(50);
   const selected = cases.find((item) => item.id === selectedId) || cases[0];
-  const visibleCases = useMemo(() => cases.filter((item) => filter === 'all' || (filter === 'scale' ? item.type === 'Scale scenario' : item.type === 'Benchmark block')), [filter]);
+  const visibleCases = useMemo(() => cases.filter((item) => filter === 'all' || (filter === 'rankable' ? item.metricStatus === 'rankable' : item.metricStatus === 'needs-denominator')), [filter]);
   const selectedCoverage = selected.type === 'Scale scenario' ? coverage : 100;
   const selectedResult = selected.result(selectedCoverage);
 
@@ -203,19 +220,19 @@ function Portfolio({ selectedId, setSelectedId }) {
       <section className="hero">
         <div className="eyebrow"><span className="eyebrow-line"/> Impact portfolio / v1.0</div>
         <h1>Damage we could<br/><em>leave behind.</em></h1>
-        <p className="hero-copy">A focused portfolio of emissions that current technology could potentially prevent — with the evidence, boundary and remaining unknowns left in the open.</p>
+        <p className="hero-copy">A focused portfolio built around one comparable metric: <strong>avoidable CO₂e per year for a company</strong>. When the company denominator is missing, the case stays outside the ranking and shows the evidence needed to annualize it.</p>
         <div className="hero-actions"><button className="primary" onClick={() => document.getElementById('case-list')?.scrollIntoView({ behavior: 'smooth' })}>Explore the cases <Arrow/></button><div className="hero-annotation"><span>01</span> select a burden<br/><span>02</span> test the alternative<br/><span>03</span> price the gap</div></div>
       </section>
 
-      <section className="mission-strip"><div><span className="eyebrow">Our mission</span><h2>Make the environmental gap investable.</h2></div><p>We turn a company’s reported burden into a specific, testable question: what could change if an available technology delivered the same service with less climate impact?</p><div className="strip-metric"><strong>5</strong><span>portfolio<br/>cases</span></div></section>
+      <section className="mission-strip"><div><span className="eyebrow">Our mission</span><h2>Make the environmental gap investable.</h2></div><p>We turn a company’s reported burden into a specific, testable question: what could change if an available technology delivered the same service with less climate impact?</p><div className="strip-metric"><strong>2/5</strong><span>annual<br/>metric ready</span></div></section>
 
       <section className="stats-grid">
-        <div className="stat-card"><span className="stat-label">Case mix</span><strong>02 <small>scale scenarios</small></strong><p>Company-scale sensitivities where a reported source and deployment assumption are available.</p></div>
-        <div className="stat-card"><span className="stat-label">Case mix</span><strong>03 <small>benchmark blocks</small></strong><p>Normalized study units that show the technology gap without inventing a fleet denominator.</p></div>
-        <div className="stat-card dark"><span className="stat-label">The rule</span><strong>Unknown ≠ zero</strong><p>Every gap keeps its coverage, boundary and next evidence request attached.</p><span className="ring"/></div>
+        <div className="stat-card"><span className="stat-label">Comparable ranking</span><strong>02 <small>annual metrics</small></strong><p>Company-specific annual source emissions are available for a conditional comparison.</p></div>
+        <div className="stat-card"><span className="stat-label">Evidence queue</span><strong>03 <small>need denominators</small></strong><p>Technology signals are visible, but the company activity volume is not yet disclosed.</p></div>
+        <div className="stat-card dark"><span className="stat-label">The rule</span><strong>Unknown ≠ zero</strong><p>No annual CO₂e number is assigned until the source denominator can be defended.</p><span className="ring"/></div>
       </section>
 
-      <div className="section-head" id="case-list"><div><div className="eyebrow">The portfolio</div><h2>Five ways to close a gap</h2><p>Open a case to see the existing burden, the current alternative and the exact calculation.</p></div><div className="filter-tabs" role="tablist" aria-label="Filter cases">{[['all','All cases'],['scale','Scale scenarios'],['benchmark','Benchmarks']].map(([id, label]) => <button key={id} className={filter === id ? 'selected' : ''} onClick={() => setFilter(id)}>{label}</button>)}</div></div>
+      <div className="section-head" id="case-list"><div><div className="eyebrow">The portfolio</div><h2>Five ways to close a gap</h2><p>Open a case to see the annual metric gate, evidence, and exact calculation.</p></div><div className="filter-tabs" role="tablist" aria-label="Filter cases">{[['all','All cases'],['rankable','Annual metric'],['queue','Evidence queue']].map(([id, label]) => <button key={id} className={filter === id ? 'selected' : ''} onClick={() => setFilter(id)}>{label}</button>)}</div></div>
 
       <section className="portfolio-layout">
         <div className="case-list">
@@ -229,19 +246,19 @@ function Portfolio({ selectedId, setSelectedId }) {
 }
 
 function CaseCard({ item, index, selected, onClick }) {
-  const displayed = item.type === 'Scale scenario' ? `${item.defaultCoverage}%` : `${item.reduction}%`;
   const result = item.result(item.defaultCoverage);
-  return <button className={`case-card ${selected ? 'selected' : ''}`} onClick={onClick}><div className={`company-mark ${item.hue}`}>{item.mark}</div><div className="case-main"><div className="case-top"><span className="case-index">0{index + 1}</span><Badge tone={item.type === 'Scale scenario' ? 'orange' : 'neutral'}>{item.type}</Badge></div><h3>{item.name}</h3><p className="case-meta">{item.ticker} · {item.sector}</p><p className="case-activity">{item.activity}</p></div><div className="case-result"><span className="result-label">{item.type === 'Scale scenario' ? 'At 50% coverage' : 'Gap signal'}</span><strong>{item.type === 'Scale scenario' ? formatNumber(result) : displayed}<small>{item.type === 'Scale scenario' ? ' tCO₂e / yr' : ' reduction'}</small></strong><span className="case-arrow"><Arrow/></span></div></button>;
+  return <button className={`case-card ${selected ? 'selected' : ''}`} onClick={onClick}><div className={`company-mark ${item.hue}`}>{item.mark}</div><div className="case-main"><div className="case-top"><span className="case-index">0{index + 1}</span><Badge tone={item.metricStatus === 'rankable' ? 'orange' : 'neutral'}>{item.metricStatus === 'rankable' ? 'Annual metric' : 'Evidence queue'}</Badge></div><h3>{item.name}</h3><p className="case-meta">{item.ticker} · {item.sector}</p><p className="case-activity">{item.activity}</p></div><div className="case-result"><span className="result-label">{item.metricStatus === 'rankable' ? 'At 50% coverage' : 'Annual metric'}</span><strong>{item.metricStatus === 'rankable' ? formatNumber(result) : 'Pending'}<small>{item.metricStatus === 'rankable' ? ' tCO₂e / yr' : ' denominator'}</small></strong><span className="case-arrow"><Arrow/></span></div></button>;
 }
 
 function CaseDetail({ item, coverage, setCoverage, result }) {
   const isScale = item.type === 'Scale scenario';
   const percent = isScale ? item.reduction * coverage / 100 : item.reduction;
-  return <article className="detail-card" aria-live="polite"><div className="detail-head"><div className={`company-mark ${item.hue}`}>{item.mark}</div><div><div className="eyebrow">{item.sector} · {item.ticker}</div><h2>{item.name}</h2></div><Badge tone={isScale ? 'orange' : 'neutral'}>{item.confidence}</Badge></div><div className="detail-intro"><span>Case focus</span><strong>{item.activity}</strong><p>{item.existing}</p></div><div className="gap-panel"><div className="gap-title"><span>Potentially preventable</span><span>{isScale ? `${coverage}% source coverage` : 'matched study unit'}</span></div><div className="gap-number"><strong>{formatNumber(result)}</strong><span>{item.resultUnit}</span></div><div className="gap-bar"><span style={{ width: `${Math.min(percent, 100)}%` }}/></div><div className="gap-foot"><span>{percent.toFixed(percent % 1 ? 1 : 0)}% improvement gap</span><span>{item.baseline}</span></div>{isScale && <div className="coverage"><div className="coverage-label">Test the deployment assumption</div><div className="coverage-options">{[25,50,100].map((value) => <button key={value} className={coverage === value ? 'selected' : ''} onClick={() => setCoverage(value)}>{value}%</button>)}</div></div>}</div><div className="detail-sections"><div><span className="mini-label">01 · Existing burden</span><p>{item.baselineLabel}</p><strong>{item.baseline}</strong></div><div><span className="mini-label">02 · Available alternative</span><p>{item.technology}</p><strong className="tech-text">{item.techReason}</strong></div></div><div className="calculation"><div className="calc-head"><span>03 · How the gap is quantified</span><Badge tone="formula">Formula</Badge></div><code>{item.formula}</code><p>Boundary: {item.boundary}</p></div><div className="detail-next"><span className="mini-label">Next proof point</span><p>{item.next}</p></div><div className="sources"><div className="sources-head"><span className="mini-label">Evidence trail</span><span>{item.sources.length} sources</span></div>{item.sources.map(([label, url]) => <a href={url} target="_blank" rel="noreferrer" key={url}>{label}<Arrow/></a>)}</div><details className="caveat"><summary>Show limits &amp; assumptions <span>+</span></summary><ul>{item.caveats.map((caveat) => <li key={caveat}>{caveat}</li>)}</ul></details></article>;
+  const annualMetric = item.metricStatus === 'rankable';
+  return <article className="detail-card" aria-live="polite"><div className="detail-head"><div className={`company-mark ${item.hue}`}>{item.mark}</div><div><div className="eyebrow">{item.sector} · {item.ticker}</div><h2>{item.name}</h2></div><Badge tone={annualMetric ? 'orange' : 'neutral'}>{annualMetric ? 'Comparable annual metric' : 'Needs annual denominator'}</Badge></div><div className="detail-intro"><span>Case focus</span><strong>{item.activity}</strong><p>{item.existing}</p></div><div className={`gap-panel ${annualMetric ? '' : 'pending-panel'}`}><div className="gap-title"><span>{annualMetric ? 'Avoidable CO₂e / year' : 'Annual metric status'}</span><span>{annualMetric ? `${coverage}% source coverage` : 'Not ranked yet'}</span></div><div className="gap-number"><strong>{annualMetric ? formatNumber(result) : 'Pending'}</strong><span>{annualMetric ? 'tCO₂e / year' : 'company denominator needed'}</span></div>{annualMetric ? <><div className="gap-bar"><span style={{ width: `${Math.min(percent, 100)}%` }}/></div><div className="gap-foot"><span>{percent.toFixed(percent % 1 ? 1 : 0)}% improvement gap</span><span>{item.baseline}</span></div></> : <div className="benchmark-signal"><span>Technology signal</span><strong>{item.benchmarkResult}</strong><p>{item.annualizationGap}</p></div>}{isScale && <div className="coverage"><div className="coverage-label">Test the deployment assumption</div><div className="coverage-options">{[25,50,100].map((value) => <button key={value} className={coverage === value ? 'selected' : ''} onClick={() => setCoverage(value)}>{value}%</button>)}</div></div>}</div><div className="detail-sections"><div><span className="mini-label">01 · Existing burden</span><p>{item.baselineLabel}</p><strong>{item.baseline}</strong></div><div><span className="mini-label">02 · Available alternative</span><p>{item.technology}</p><strong className="tech-text">{item.techReason}</strong></div></div><div className="calculation"><div className="calc-head"><span>03 · Standardized annual method</span><Badge tone="formula">{annualMetric ? 'Formula' : 'Gate'}</Badge></div><code>{annualMetric ? 'reported annual source × eligible share × adoption × (1 − alternative intensity ÷ current intensity)' : 'annual activity volume × (current intensity − alternative intensity)'}</code><p>{annualMetric ? `Applied here: ${item.formula}` : `Annual metric intentionally not assigned. ${item.annualizationGap}`}</p><p>Boundary: {item.boundary}</p></div><div className="detail-next"><span className="mini-label">Next proof point</span><p>{item.next}</p></div><div className="sources"><div className="sources-head"><span className="mini-label">Evidence trail</span><span>{item.sources.length} sources</span></div>{item.sources.map(([label, url]) => <a href={url} target="_blank" rel="noreferrer" key={url}>{label}<Arrow/></a>)}</div><details className="caveat"><summary>Show limits &amp; assumptions <span>+</span></summary><ul>{item.caveats.map((caveat) => <li key={caveat}>{caveat}</li>)}</ul></details></article>;
 }
 
 function Method() {
-  return <><section className="hero compact-hero"><div className="eyebrow"><span className="eyebrow-line"/> The method</div><h1>Keep the claim<br/><em>inside the evidence.</em></h1><p className="hero-copy">The gap is not a green score. It is a bounded counterfactual: a reported burden, a currently implementable alternative, and a transparent assumption about where it can apply.</p></section><section className="method-intro"><div className="formula-large">Potentially preventable CO₂e<br/><strong>= baseline × coverage × reduction</strong></div><div><div className="eyebrow">The four-part test</div><h2>Every case must earn its number.</h2><p>We keep physical emissions, modeled societal damage and investment cashflows separate. The portfolio is a decision surface for finding projects to validate — not a ranking of companies.</p></div></section><section className="method-grid">{[['01','Baseline','Start with the company or study’s original year, units and boundary. Missing data stays missing.'],['02','Alternative','Name a technology that already exists and preserves the service being delivered.'],['03','Coverage','Show how much of the source is actually eligible and converted. A 50% scenario is an assumption, not a forecast.'],['04','Boundary','Subtract material added burdens and keep excluded lifecycle effects visible. Never hide them in a percentage.']].map(([number, title, body]) => <div className="method-card" key={number}><span className="step-no">{number}</span><h3>{title}</h3><p>{body}</p></div>)}</section><section className="guardrail"><div><div className="eyebrow">What this prevents</div><h2>A persuasive number<br/>from becoming a false one.</h2></div><div className="guardrail-list"><p><span>×</span> No process percentage is multiplied by a company’s entire footprint.</p><p><span>×</span> No “avoided damage” is presented as investable cashflow.</p><p><span>×</span> No committed or existing project is counted as new funding impact.</p></div></section></>;
+  return <><section className="hero compact-hero"><div className="eyebrow"><span className="eyebrow-line"/> The method</div><h1>Keep the claim<br/><em>inside the evidence.</em></h1><p className="hero-copy">The gap is not a green score. It is one comparable annual metric: the company’s reported source emissions, translated through an alternative technology intensity and an explicit coverage assumption.</p></section><section className="method-intro"><div className="formula-large">Avoidable CO₂e / year<br/><strong>= source × coverage × (1 − alternative ÷ current)</strong></div><div><div className="eyebrow">The annualization gate</div><h2>Every case must earn its denominator.</h2><p>We only rank a case when a company-specific annual source is available. If the annual activity volume is missing, the technology signal stays in the evidence queue until it can be converted into tCO₂e/year.</p></div></section><section className="method-grid">{[['01','Company source','Start with a reported annual emissions source tied to the technology or activity being changed. Do not use a whole-company total as a proxy.'],['02','Alternative intensity','Find a current technology that delivers comparable service and express its emissions per matching unit.'],['03','Coverage','Estimate only the share that is eligible and newly converted. Coverage is an assumption unless the company discloses it.'],['04','Net boundary','Subtract added burdens and keep excluded lifecycle effects visible. A gross result is labeled gross.']].map(([number, title, body]) => <div className="method-card" key={number}><span className="step-no">{number}</span><h3>{title}</h3><p>{body}</p></div>)}</section><section className="guardrail"><div><div className="eyebrow">What this prevents</div><h2>A persuasive number<br/>from becoming a false one.</h2></div><div className="guardrail-list"><p><span>×</span> No process percentage is multiplied by a company’s entire footprint.</p><p><span>×</span> No case enters the ranking without a defended annual denominator.</p><p><span>×</span> No “avoided damage” is presented as investable cashflow.</p></div></section></>;
 }
 
 function Thesis() {
