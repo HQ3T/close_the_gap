@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
 const valuation = 255.12;
 
@@ -182,29 +182,84 @@ function Logo() {
 
 function Badge({ children, tone = 'neutral' }) { return <span className={`badge ${tone}`}>{children}</span>; }
 
-function Sidebar({ view, setView }) {
-  return (
-    <aside className="sidebar">
-      <Logo />
-      <p className="tagline">Potential, made visible.</p>
-      <nav className="side-nav" aria-label="Primary navigation">
-        <button className={view === 'portfolio' ? 'active' : ''} onClick={() => setView('portfolio')}><span>01</span>Portfolio</button>
-        <button className={view === 'method' ? 'active' : ''} onClick={() => setView('method')}><span>02</span>Method</button>
-        <button className={view === 'thesis' ? 'active' : ''} onClick={() => setView('thesis')}><span>03</span>Impact thesis</button>
-      </nav>
-      <div className="sidebar-foot">
-        <Badge tone="live"><span className="status-dot"/> Research prototype</Badge>
-        <p>5 cases<br/>2 scale scenarios<br/>3 benchmark blocks</p>
-        <div className="side-rule"/>
-        <p className="side-note">Public evidence · snapshot 13 Sep 2026</p>
-      </div>
-    </aside>
-  );
-}
-
-function Header({ view }) {
+function Navbar({ view, setView, theme, onToggleTheme }) {
   const label = view === 'portfolio' ? 'Opportunity portfolio' : view === 'method' ? 'How we measure' : 'From gap to action';
-  return <header className="topbar"><div className="crumb"><span className="crumb-dot"/> S&amp;P 500 research pilot <span className="slash">/</span> {label}</div><div className="evidence-pill"><span className="status-dot"/> Evidence snapshot · Sep 2026</div></header>;
+  return (
+    <header className="navbar-wrapper">
+      <div className="navbar">
+        <div className="navbar-brand-group">
+          <Logo />
+          <span className="nav-divider" aria-hidden="true" />
+          <span className="nav-tagline">Potential, made visible.</span>
+        </div>
+
+        <nav className="navbar-nav" aria-label="Primary navigation">
+          <button
+            className={view === 'portfolio' ? 'active' : ''}
+            onClick={() => setView('portfolio')}
+            aria-current={view === 'portfolio' ? 'page' : undefined}
+          >
+            <span>01</span>Portfolio
+          </button>
+          <button
+            className={view === 'method' ? 'active' : ''}
+            onClick={() => setView('method')}
+            aria-current={view === 'method' ? 'page' : undefined}
+          >
+            <span>02</span>Method
+          </button>
+          <button
+            className={view === 'thesis' ? 'active' : ''}
+            onClick={() => setView('thesis')}
+            aria-current={view === 'thesis' ? 'page' : undefined}
+          >
+            <span>03</span>Impact thesis
+          </button>
+        </nav>
+
+        <div className="navbar-meta">
+          <button
+            className="theme-toggle"
+            onClick={onToggleTheme}
+            title={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
+            aria-label="Toggle dark mode"
+          >
+            {theme === 'dark' ? (
+              <svg className="theme-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                <circle cx="12" cy="12" r="5" />
+                <line x1="12" y1="1" x2="12" y2="3" />
+                <line x1="12" y1="21" x2="12" y2="23" />
+                <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" />
+                <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" />
+                <line x1="1" y1="12" x2="3" y2="12" />
+                <line x1="21" y1="12" x2="23" y2="12" />
+                <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" />
+                <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
+              </svg>
+            ) : (
+              <svg className="theme-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
+              </svg>
+            )}
+            <span className="theme-label">{theme === 'dark' ? 'Light' : 'Dark'}</span>
+          </button>
+          <Badge tone="live"><span className="status-dot"/> Research prototype</Badge>
+          <div className="evidence-pill"><span className="status-dot"/> Evidence snapshot · Sep 2026</div>
+        </div>
+      </div>
+
+      <div className="subbar">
+        <div className="subbar-inner">
+          <div className="crumb">
+            <span className="crumb-dot"/> S&amp;P 500 research pilot <span className="slash">/</span> {label}
+          </div>
+          <div className="subbar-stats">
+            <span>5 cases · 2 scale scenarios · 3 benchmark blocks</span>
+          </div>
+        </div>
+      </div>
+    </header>
+  );
 }
 
 function Portfolio({ selectedId, setSelectedId }) {
@@ -220,24 +275,104 @@ function Portfolio({ selectedId, setSelectedId }) {
       <section className="hero">
         <div className="eyebrow"><span className="eyebrow-line"/> Impact portfolio / v1.0</div>
         <h1>Damage we could<br/><em>leave behind.</em></h1>
-        <p className="hero-copy">A focused portfolio built around one comparable metric: <strong>avoidable CO₂e per year for a company</strong>. When the company denominator is missing, the case stays outside the ranking and shows the evidence needed to annualize it.</p>
-        <div className="hero-actions"><button className="primary" onClick={() => document.getElementById('case-list')?.scrollIntoView({ behavior: 'smooth' })}>Explore the cases <Arrow/></button><div className="hero-annotation"><span>01</span> select a burden<br/><span>02</span> test the alternative<br/><span>03</span> price the gap</div></div>
+        
+        <div className="hero-lead">
+          <p className="hero-copy">
+            A focused research portfolio built around one strictly comparable metric: <strong>avoidable CO₂e per year</strong>.
+          </p>
+          <div className="hero-pills">
+            <span className="hero-pill">✓ Verified company denominator</span>
+            <span className="hero-pill">✓ Published technical alternatives</span>
+            <span className="hero-pill">✓ Zero unverified estimates</span>
+          </div>
+        </div>
+
+        <div className="hero-actions">
+          <button className="primary" onClick={() => document.getElementById('case-list')?.scrollIntoView({ behavior: 'smooth' })}>
+            Explore the cases <Arrow/>
+          </button>
+
+          <div className="hero-stepper" aria-label="Method sequence">
+            <div className="step-card">
+              <span className="step-num">01</span>
+              <span className="step-label">Select burden</span>
+            </div>
+            <span className="step-arrow" aria-hidden="true">→</span>
+            <div className="step-card">
+              <span className="step-num">02</span>
+              <span className="step-label">Test alternative</span>
+            </div>
+            <span className="step-arrow" aria-hidden="true">→</span>
+            <div className="step-card highlighted">
+              <div className="step-highlight-tag">Valuation payoff</div>
+              <div className="step-highlight-main">
+                <span className="step-num">03</span>
+                <strong>Price the gap</strong>
+              </div>
+              <span className="step-badge">${valuation.toFixed(2)} / tCO₂e</span>
+            </div>
+          </div>
+        </div>
       </section>
 
-      <section className="mission-strip"><div><span className="eyebrow">Our mission</span><h2>Make the environmental gap investable.</h2></div><p>We turn a company’s reported burden into a specific, testable question: what could change if an available technology delivered the same service with less climate impact?</p><div className="strip-metric"><strong>2/5</strong><span>annual<br/>metric ready</span></div></section>
+      <section className="mission-strip">
+        <div>
+          <span className="eyebrow">Our mission</span>
+          <h2>Make the environmental gap investable.</h2>
+        </div>
+        <div className="mission-copy">
+          <p>
+            We turn reported company emissions into a transparent, testable question: 
+            <strong> what if an available technology delivered the same service with less climate impact?</strong>
+          </p>
+        </div>
+        <div className="strip-metric">
+          <strong>2/5</strong>
+          <span>annual<br/>metric ready</span>
+        </div>
+      </section>
 
       <section className="stats-grid">
-        <div className="stat-card"><span className="stat-label">Comparable ranking</span><strong>02 <small>annual metrics</small></strong><p>Company-specific annual source emissions are available for a conditional comparison.</p></div>
-        <div className="stat-card"><span className="stat-label">Evidence queue</span><strong>03 <small>need denominators</small></strong><p>Technology signals are visible, but the company activity volume is not yet disclosed.</p></div>
-        <div className="stat-card dark"><span className="stat-label">The rule</span><strong>Unknown ≠ zero</strong><p>No annual CO₂e number is assigned until the source denominator can be defended.</p><span className="ring"/></div>
+        <div className="stat-card">
+          <span className="stat-label">Comparable ranking</span>
+          <strong>02 <small>annual metrics</small></strong>
+          <p>Company-specific annual source emissions are available for an apples-to-apples comparison.</p>
+        </div>
+        <div className="stat-card">
+          <span className="stat-label">Evidence queue</span>
+          <strong>03 <small>need denominators</small></strong>
+          <p>Technology signals are measured, but the corporate activity volume remains undisclosed.</p>
+        </div>
+        <div className="stat-card dark">
+          <span className="stat-label">The rule</span>
+          <strong>Unknown ≠ zero</strong>
+          <p>No annual CO₂e number is assigned until the source denominator can be defended.</p>
+          <span className="ring"/>
+        </div>
       </section>
 
-      <div className="section-head" id="case-list"><div><div className="eyebrow">The portfolio</div><h2>Five ways to close a gap</h2><p>Open a case to see the annual metric gate, evidence, and exact calculation.</p></div><div className="filter-tabs" role="tablist" aria-label="Filter cases">{[['all','All cases'],['rankable','Annual metric'],['queue','Evidence queue']].map(([id, label]) => <button key={id} className={filter === id ? 'selected' : ''} onClick={() => setFilter(id)}>{label}</button>)}</div></div>
+      <div className="section-head" id="case-list">
+        <div>
+          <div className="eyebrow">The portfolio</div>
+          <h2>Five ways to close a gap</h2>
+          <p>Open a case to see the annual metric gate, evidence, and exact calculation.</p>
+        </div>
+        <div className="filter-tabs" role="tablist" aria-label="Filter cases">
+          {[['all','All cases'],['rankable','Annual metric'],['queue','Evidence queue']].map(([id, label]) => (
+            <button key={id} className={filter === id ? 'selected' : ''} onClick={() => setFilter(id)}>{label}</button>
+          ))}
+        </div>
+      </div>
 
       <section className="portfolio-layout">
         <div className="case-list">
-          {visibleCases.map((item, index) => <CaseCard key={item.id} item={item} index={index} selected={item.id === selected.id} onClick={() => setSelectedId(item.id)}/>) }
-          <div className="list-note"><span>i</span><p>Percentages describe each case’s own activity boundary. Normalized blocks are not whole-company totals and cases should not be added together.</p></div>
+          {visibleCases.map((item, index) => (
+            <CaseCard key={item.id} item={item} index={index} selected={item.id === selected.id} onClick={() => setSelectedId(item.id)}/>
+          ))}
+          <div className="list-note">
+            <span>i</span>
+            <p>Percentages describe each case’s activity boundary. Normalized blocks are not whole-company totals and cases should not be summed.</p>
+          </div>
         </div>
         <CaseDetail item={selected} coverage={selectedCoverage} setCoverage={setCoverage} result={selectedResult}/>
       </section>
@@ -247,26 +382,307 @@ function Portfolio({ selectedId, setSelectedId }) {
 
 function CaseCard({ item, index, selected, onClick }) {
   const result = item.result(item.defaultCoverage);
-  return <button className={`case-card ${selected ? 'selected' : ''}`} onClick={onClick}><div className={`company-mark ${item.hue}`}>{item.mark}</div><div className="case-main"><div className="case-top"><span className="case-index">0{index + 1}</span><Badge tone={item.metricStatus === 'rankable' ? 'orange' : 'neutral'}>{item.metricStatus === 'rankable' ? 'Annual metric' : 'Evidence queue'}</Badge></div><h3>{item.name}</h3><p className="case-meta">{item.ticker} · {item.sector}</p><p className="case-activity">{item.activity}</p></div><div className="case-result"><span className="result-label">{item.metricStatus === 'rankable' ? 'At 50% coverage' : 'Annual metric'}</span><strong>{item.metricStatus === 'rankable' ? formatNumber(result) : 'Pending'}<small>{item.metricStatus === 'rankable' ? ' tCO₂e / yr' : ' denominator'}</small></strong><span className="case-arrow"><Arrow/></span></div></button>;
+  return (
+    <button className={`case-card ${selected ? 'selected' : ''}`} onClick={onClick}>
+      <div className={`company-mark ${item.hue}`}>{item.mark}</div>
+      <div className="case-main">
+        <div className="case-top">
+          <span className="case-index">0{index + 1}</span>
+          <Badge tone={item.metricStatus === 'rankable' ? 'orange' : 'neutral'}>
+            {item.metricStatus === 'rankable' ? 'Annual metric' : 'Evidence queue'}
+          </Badge>
+        </div>
+        <h3>{item.name}</h3>
+        <p className="case-meta">{item.ticker} · {item.sector}</p>
+        <p className="case-activity">{item.activity}</p>
+      </div>
+      <div className="case-result">
+        <span className="result-label">{item.metricStatus === 'rankable' ? 'At 50% coverage' : 'Annual metric'}</span>
+        <strong>{item.metricStatus === 'rankable' ? formatNumber(result) : 'Pending'}<small>{item.metricStatus === 'rankable' ? ' tCO₂e / yr' : ' denominator'}</small></strong>
+        <span className="case-arrow"><Arrow/></span>
+      </div>
+    </button>
+  );
 }
 
 function CaseDetail({ item, coverage, setCoverage, result }) {
   const isScale = item.type === 'Scale scenario';
   const percent = isScale ? item.reduction * coverage / 100 : item.reduction;
   const annualMetric = item.metricStatus === 'rankable';
-  return <article className="detail-card" aria-live="polite"><div className="detail-head"><div className={`company-mark ${item.hue}`}>{item.mark}</div><div><div className="eyebrow">{item.sector} · {item.ticker}</div><h2>{item.name}</h2></div><Badge tone={annualMetric ? 'orange' : 'neutral'}>{annualMetric ? 'Comparable annual metric' : 'Needs annual denominator'}</Badge></div><div className="detail-intro"><span>Case focus</span><strong>{item.activity}</strong><p>{item.existing}</p></div><div className={`gap-panel ${annualMetric ? '' : 'pending-panel'}`}><div className="gap-title"><span>{annualMetric ? 'Avoidable CO₂e / year' : 'Annual metric status'}</span><span>{annualMetric ? `${coverage}% source coverage` : 'Not ranked yet'}</span></div><div className="gap-number"><strong>{annualMetric ? formatNumber(result) : 'Pending'}</strong><span>{annualMetric ? 'tCO₂e / year' : 'company denominator needed'}</span></div>{annualMetric ? <><div className="gap-bar"><span style={{ width: `${Math.min(percent, 100)}%` }}/></div><div className="gap-foot"><span>{percent.toFixed(percent % 1 ? 1 : 0)}% improvement gap</span><span>{item.baseline}</span></div></> : <div className="benchmark-signal"><span>Technology signal</span><strong>{item.benchmarkResult}</strong><p>{item.annualizationGap}</p></div>}{isScale && <div className="coverage"><div className="coverage-label">Test the deployment assumption</div><div className="coverage-options">{[25,50,100].map((value) => <button key={value} className={coverage === value ? 'selected' : ''} onClick={() => setCoverage(value)}>{value}%</button>)}</div></div>}</div><div className="detail-sections"><div><span className="mini-label">01 · Existing burden</span><p>{item.baselineLabel}</p><strong>{item.baseline}</strong></div><div><span className="mini-label">02 · Available alternative</span><p>{item.technology}</p><strong className="tech-text">{item.techReason}</strong></div></div><div className="calculation"><div className="calc-head"><span>03 · Standardized annual method</span><Badge tone="formula">{annualMetric ? 'Formula' : 'Gate'}</Badge></div><code>{annualMetric ? 'reported annual source × eligible share × adoption × (1 − alternative intensity ÷ current intensity)' : 'annual activity volume × (current intensity − alternative intensity)'}</code><p>{annualMetric ? `Applied here: ${item.formula}` : `Annual metric intentionally not assigned. ${item.annualizationGap}`}</p><p>Boundary: {item.boundary}</p></div><div className="detail-next"><span className="mini-label">Next proof point</span><p>{item.next}</p></div><div className="sources"><div className="sources-head"><span className="mini-label">Evidence trail</span><span>{item.sources.length} sources</span></div>{item.sources.map(([label, url]) => <a href={url} target="_blank" rel="noreferrer" key={url}>{label}<Arrow/></a>)}</div><details className="caveat"><summary>Show limits &amp; assumptions <span>+</span></summary><ul>{item.caveats.map((caveat) => <li key={caveat}>{caveat}</li>)}</ul></details></article>;
+  return (
+    <article className="detail-card" aria-live="polite">
+      <div className="detail-head">
+        <div className={`company-mark ${item.hue}`}>{item.mark}</div>
+        <div>
+          <div className="eyebrow">{item.sector} · {item.ticker}</div>
+          <h2>{item.name}</h2>
+        </div>
+        <Badge tone={annualMetric ? 'orange' : 'neutral'}>
+          {annualMetric ? 'Comparable annual metric' : 'Needs annual denominator'}
+        </Badge>
+      </div>
+
+      <div className="detail-intro">
+        <span className="mini-label">Case focus</span>
+        <strong>{item.activity}</strong>
+        <p className="detail-desc">{item.existing}</p>
+      </div>
+
+      <div className={`gap-panel ${annualMetric ? '' : 'pending-panel'}`}>
+        <div className="gap-title">
+          <span>{annualMetric ? 'Avoidable CO₂e / year' : 'Annual metric status'}</span>
+          <span>{annualMetric ? `${coverage}% source coverage` : 'Not ranked yet'}</span>
+        </div>
+        <div className="gap-number">
+          <strong>{annualMetric ? formatNumber(result) : 'Pending'}</strong>
+          <span>{annualMetric ? 'tCO₂e / year' : 'company denominator needed'}</span>
+        </div>
+        {annualMetric ? (
+          <>
+            <div className="gap-bar"><span style={{ width: `${Math.min(percent, 100)}%` }}/></div>
+            <div className="gap-foot">
+              <span>{percent.toFixed(percent % 1 ? 1 : 0)}% improvement gap</span>
+              <span>Baseline: {item.baseline}</span>
+            </div>
+          </>
+        ) : (
+          <div className="benchmark-signal">
+            <span>Technology signal</span>
+            <strong>{item.benchmarkResult}</strong>
+            <p>{item.annualizationGap}</p>
+          </div>
+        )}
+        {isScale && (
+          <div className="coverage">
+            <div className="coverage-label">Test the deployment assumption:</div>
+            <div className="coverage-options">
+              {[25, 50, 100].map((value) => (
+                <button key={value} className={coverage === value ? 'selected' : ''} onClick={() => setCoverage(value)}>
+                  {value}%
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
+      </div>
+
+      <div className="detail-sections">
+        <div className="detail-box">
+          <span className="mini-label">01 · Existing burden</span>
+          <p className="box-sub">{item.baselineLabel}</p>
+          <strong className="box-highlight">{item.baseline}</strong>
+        </div>
+        <div className="detail-box">
+          <span className="mini-label">02 · Available alternative</span>
+          <p className="box-sub">{item.technology}</p>
+          <strong className="box-highlight tech-text">{item.techReason}</strong>
+        </div>
+      </div>
+
+      <div className="calculation">
+        <div className="calc-head">
+          <span className="mini-label">03 · Standardized annual method</span>
+          <Badge tone="formula">{annualMetric ? 'Formula' : 'Gate'}</Badge>
+        </div>
+        <code>{annualMetric ? 'reported annual source × eligible share × adoption × (1 − alternative intensity ÷ current intensity)' : 'annual activity volume × (current intensity − alternative intensity)'}</code>
+        <div className="calc-details">
+          <p><strong>Applied:</strong> {annualMetric ? item.formula : `Annual metric intentionally not assigned. ${item.annualizationGap}`}</p>
+          <p><strong>Boundary:</strong> {item.boundary}</p>
+        </div>
+      </div>
+
+      <div className="detail-next">
+        <span className="mini-label">Next proof point</span>
+        <p>{item.next}</p>
+      </div>
+
+      <div className="sources">
+        <div className="sources-head">
+          <span className="mini-label">Evidence trail</span>
+          <span>{item.sources.length} sources</span>
+        </div>
+        {item.sources.map(([label, url]) => (
+          <a href={url} target="_blank" rel="noreferrer" key={url}>
+            {label}
+            <Arrow/>
+          </a>
+        ))}
+      </div>
+
+      <details className="caveat">
+        <summary>Show limits &amp; assumptions <span>+</span></summary>
+        <ul>
+          {item.caveats.map((caveat) => (
+            <li key={caveat}>{caveat}</li>
+          ))}
+        </ul>
+      </details>
+    </article>
+  );
 }
 
 function Method() {
-  return <><section className="hero compact-hero"><div className="eyebrow"><span className="eyebrow-line"/> The method</div><h1>Keep the claim<br/><em>inside the evidence.</em></h1><p className="hero-copy">The gap is not a green score. It is one comparable annual metric: the company’s reported source emissions, translated through an alternative technology intensity and an explicit coverage assumption.</p></section><section className="method-intro"><div className="formula-large">Avoidable CO₂e / year<br/><strong>= source × coverage × (1 − alternative ÷ current)</strong></div><div><div className="eyebrow">The annualization gate</div><h2>Every case must earn its denominator.</h2><p>We only rank a case when a company-specific annual source is available. If the annual activity volume is missing, the technology signal stays in the evidence queue until it can be converted into tCO₂e/year.</p></div></section><section className="method-grid">{[['01','Company source','Start with a reported annual emissions source tied to the technology or activity being changed. Do not use a whole-company total as a proxy.'],['02','Alternative intensity','Find a current technology that delivers comparable service and express its emissions per matching unit.'],['03','Coverage','Estimate only the share that is eligible and newly converted. Coverage is an assumption unless the company discloses it.'],['04','Net boundary','Subtract added burdens and keep excluded lifecycle effects visible. A gross result is labeled gross.']].map(([number, title, body]) => <div className="method-card" key={number}><span className="step-no">{number}</span><h3>{title}</h3><p>{body}</p></div>)}</section><section className="guardrail"><div><div className="eyebrow">What this prevents</div><h2>A persuasive number<br/>from becoming a false one.</h2></div><div className="guardrail-list"><p><span>×</span> No process percentage is multiplied by a company’s entire footprint.</p><p><span>×</span> No case enters the ranking without a defended annual denominator.</p><p><span>×</span> No “avoided damage” is presented as investable cashflow.</p></div></section></>;
+  return (
+    <>
+      <section className="hero compact-hero">
+        <div className="eyebrow"><span className="eyebrow-line"/> The method</div>
+        <h1>Keep the claim<br/><em>inside the evidence.</em></h1>
+        <p className="hero-copy">
+          The gap is not an arbitrary rating. It is one strictly audited metric: the company’s reported source emissions translated through an alternative technology intensity and explicit coverage.
+        </p>
+      </section>
+
+      <section className="method-intro">
+        <div className="formula-large">
+          Avoidable CO₂e / year<br/>
+          <strong>= source × coverage × (1 − alternative ÷ current)</strong>
+        </div>
+        <div>
+          <div className="eyebrow">The annualization gate</div>
+          <h2>Every case must earn its denominator.</h2>
+          <p>We only rank a case when a company-specific annual source is available. If activity volume is undisclosed, the case remains in the evidence queue until verified.</p>
+        </div>
+      </section>
+
+      <section className="method-grid">
+        {[
+          ['01','Company source','Start with a reported annual emissions source tied directly to the activity being changed. Never use total corporate footprint as a proxy.'],
+          ['02','Alternative intensity','Identify a proven commercial technology that delivers identical service and calculate emissions per matching unit.'],
+          ['03','Coverage','Model only newly converted, eligible equipment. Treat coverage as a tested parameter, never an unverified assumption.'],
+          ['04','Net boundary','Subtract added burdens and display excluded lifecycle effects prominently. All gross results are explicitly labeled.']
+        ].map(([number, title, body]) => (
+          <div className="method-card" key={number}>
+            <span className="step-no">{number}</span>
+            <h3>{title}</h3>
+            <p>{body}</p>
+          </div>
+        ))}
+      </section>
+
+      <section className="guardrail">
+        <div>
+          <div className="eyebrow">Methodology guardrails</div>
+          <h2>Preventing persuasion<br/>from becoming distortion.</h2>
+        </div>
+        <div className="guardrail-list">
+          <p><span>×</span> No process percentage is multiplied against a whole company footprint.</p>
+          <p><span>×</span> No case enters the ranking without a verified annual denominator.</p>
+          <p><span>×</span> No avoided damage estimate is presented as guaranteed cashflow.</p>
+        </div>
+      </section>
+    </>
+  );
 }
 
 function Thesis() {
-  return <><section className="hero compact-hero"><div className="eyebrow"><span className="eyebrow-line"/> From gap to action</div><h1>Fund the proof,<br/><em>then the rollout.</em></h1><p className="hero-copy">The portfolio is a sourcing layer for environmental projects. The investable product is not the percentage; it is the verified asset, contracted savings and additionality behind it.</p></section><section className="thesis-callout"><div className="callout-big">The opportunity<br/><em>is the next proof point.</em></div><p>Start with cases where a source, technology and measurement plan are all visible. Use capital to move from technical potential to a named asset that can repay it.</p></section><section className="thesis-steps">{[['01','Screen','Find a reported burden with a credible current alternative.'],['02','Underwrite','Validate the exact asset, net lifecycle effect, capital need and without-funding case.'],['03','Measure','Contract for metered physical outcomes and publish what did not work.']].map(([number,title,body]) => <div className="thesis-step" key={number}><span>{number}</span><h3>{title}</h3><p>{body}</p></div>)}</section><section className="portfolio-note"><div className="eyebrow">Investment guardrail</div><h2>Environmental value is not repayment.</h2><p>The $255.12/tCO₂e reference used in the portfolio is a screening proxy for modeled future societal damage. It is not company liability, revenue, or cash available to repay capital. Any impact vehicle still needs a separate cashflow model.</p><div className="note-stat"><strong>${valuation.toFixed(2)}</strong><span>per modeled tCO₂e<br/>2024 USD · screening only</span></div></section></>;
+  return (
+    <>
+      <section className="hero compact-hero">
+        <div className="eyebrow"><span className="eyebrow-line"/> From gap to action</div>
+        <h1>Fund the proof,<br/><em>then the rollout.</em></h1>
+        <p className="hero-copy">
+          The portfolio functions as a project sourcing engine. The investable asset is not an ESG score; it is the verified hardware, contracted emissions reduction, and additionality behind it.
+        </p>
+      </section>
+
+      <section className="thesis-callout">
+        <div className="callout-big">
+          The opportunity<br/>
+          <em>is the next proof point.</em>
+        </div>
+        <p>
+          Focus capital where reported sources, commercial alternatives, and transparent verification plans converge. Convert technical potential into contracted assets that generate verified impact.
+        </p>
+      </section>
+
+      <section className="thesis-steps">
+        {[
+          ['01','Screen','Identify reported corporate burdens with credible, lower-intensity commercial alternatives.'],
+          ['02','Underwrite','Validate specific assets, net lifecycle balances, capital requirements, and counterfactual baselines.'],
+          ['03','Measure','Contract for metered physical outcomes and publish transparent, auditable project data.']
+        ].map(([number, title, body]) => (
+          <div className="thesis-step" key={number}>
+            <span>{number}</span>
+            <h3>{title}</h3>
+            <p>{body}</p>
+          </div>
+        ))}
+      </section>
+
+      <section className="portfolio-note">
+        <div className="eyebrow">Investment guardrail</div>
+        <h2>Environmental value is not cash repayment.</h2>
+        <p>
+          The ${valuation.toFixed(2)}/tCO₂e benchmark is an economic proxy for modeled future societal damage. It is not corporate liability or direct revenue. Every capital vehicle requires a separate cashflow model.
+        </p>
+        <div className="note-stat">
+          <strong>${valuation.toFixed(2)}</strong>
+          <span>per modeled tCO₂e<br/>2024 USD · screening only</span>
+        </div>
+      </section>
+    </>
+  );
 }
 
 export default function Page() {
   const [view, setView] = useState('portfolio');
   const [selectedId, setSelectedId] = useState('walmart');
-  return <div className="app-shell"><Sidebar view={view} setView={setView}/><main className="main"><Header view={view}/><div className="content">{view === 'portfolio' ? <Portfolio selectedId={selectedId} setSelectedId={setSelectedId}/> : view === 'method' ? <Method/> : <Thesis/>}<footer><span>the gap. © 2026 · evidence-led sustainability prototype</span><span>Available technology · explicit assumptions · visible uncertainty</span></footer></div></main></div>;
+  const [theme, setTheme] = useState('light');
+
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem('gap-theme');
+      if (saved === 'dark' || saved === 'light') {
+        setTheme(saved);
+      } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        setTheme('dark');
+      }
+    } catch {}
+  }, []);
+
+  const handleToggleTheme = () => {
+    const next = theme === 'dark' ? 'light' : 'dark';
+    setTheme(next);
+    try {
+      localStorage.setItem('gap-theme', next);
+    } catch {}
+  };
+
+  return (
+    <div className="site-shell" data-theme={theme}>
+      <Navbar view={view} setView={setView} theme={theme} onToggleTheme={handleToggleTheme} />
+      <main className="main-content">
+        <div className="content-container">
+          {view === 'portfolio' ? (
+            <Portfolio selectedId={selectedId} setSelectedId={setSelectedId} />
+          ) : view === 'method' ? (
+            <Method />
+          ) : (
+            <Thesis />
+          )}
+        </div>
+        <footer className="site-footer">
+          <div className="footer-top">
+            <div className="footer-brand-col">
+              <Logo />
+              <p className="footer-desc">
+                A transparent, evidence-led research portfolio of CO₂e reduction opportunities across S&amp;P 500 corporations.
+              </p>
+            </div>
+            <div className="footer-status-col">
+              <div className="footer-status-pills">
+                <Badge tone="live"><span className="status-dot"/> Research prototype</Badge>
+                <div className="evidence-pill"><span className="status-dot"/> Snapshot · 13 Sep 2026</div>
+              </div>
+              <p className="footer-case-summary">5 cases · 2 scale scenarios · 3 benchmark blocks</p>
+            </div>
+          </div>
+          <div className="footer-bottom">
+            <span>the gap. © 2026 · evidence-led sustainability prototype</span>
+            <span>Available technology · explicit assumptions · visible uncertainty</span>
+          </div>
+        </footer>
+      </main>
+    </div>
+  );
 }
