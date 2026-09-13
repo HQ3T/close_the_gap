@@ -177,7 +177,7 @@ function formatNumber(value) {
 function Arrow() { return <span className="arrow" aria-hidden="true">↗</span>; }
 
 function Logo() {
-  return <div className="brand"><span className="brand-mark"/><span>the gap<span className="brand-dot">.</span></span></div>;
+  return <div className="brand"><span className="brand-mark" /><span>the gap<span className="brand-dot">.</span></span></div>;
 }
 
 function Badge({ children, tone = 'neutral' }) { return <span className={`badge ${tone}`}>{children}</span>; }
@@ -209,11 +209,11 @@ function Navbar({ view, setView, theme, onToggleTheme }) {
             <span>02</span>Method
           </button>
           <button
-            className={view === 'thesis' ? 'active' : ''}
-            onClick={() => setView('thesis')}
-            aria-current={view === 'thesis' ? 'page' : undefined}
+            className={view === 'billion' ? 'active' : ''}
+            onClick={() => setView('billion')}
+            aria-current={view === 'billion' ? 'page' : undefined}
           >
-            <span>03</span>Impact thesis
+            <span>03</span>The $1bn question
           </button>
         </nav>
 
@@ -243,15 +243,15 @@ function Navbar({ view, setView, theme, onToggleTheme }) {
             )}
             <span className="theme-label">{theme === 'dark' ? 'Light' : 'Dark'}</span>
           </button>
-          <Badge tone="live"><span className="status-dot"/> Research prototype</Badge>
-          <div className="evidence-pill"><span className="status-dot"/> Evidence snapshot · Sep 2026</div>
+          <Badge tone="live"><span className="status-dot" /> Research prototype</Badge>
+          <div className="evidence-pill"><span className="status-dot" /> Evidence snapshot · Sep 2026</div>
         </div>
       </div>
 
       <div className="subbar">
         <div className="subbar-inner">
           <div className="crumb">
-            <span className="crumb-dot"/> S&amp;P 500 research pilot <span className="slash">/</span> {label}
+            <span className="crumb-dot" /> S&amp;P 500 research pilot <span className="slash">/</span> {view === 'portfolio' ? 'Opportunity portfolio' : view === 'method' ? 'How we measure' : 'Capital & impact'}
           </div>
           <div className="subbar-stats">
             <span>5 cases · 2 scale scenarios · 3 benchmark blocks</span>
@@ -273,23 +273,19 @@ function Portfolio({ selectedId, setSelectedId }) {
   return (
     <>
       <section className="hero">
-        <div className="eyebrow"><span className="eyebrow-line"/> Impact portfolio / v1.0</div>
-        <h1>Damage we could<br/><em>leave behind.</em></h1>
-        
-        <div className="hero-lead">
-          <p className="hero-copy">
-            A focused research portfolio built around one strictly comparable metric: <strong>avoidable CO₂e per year</strong>.
-          </p>
-          <div className="hero-pills">
-            <span className="hero-pill">✓ Verified company denominator</span>
-            <span className="hero-pill">✓ Published technical alternatives</span>
-            <span className="hero-pill">✓ Zero unverified estimates</span>
-          </div>
-        </div>
+        <div className="eyebrow"><span className="eyebrow-line" /> Impact portfolio / v1.0</div>
+        <h1>Damage we could<br /><em>leave behind.</em></h1>
+
+
+        <p className="hero-copy">
+          A focused research portfolio built around one strictly comparable metric: <strong>avoidable CO₂e per year</strong>.
+        </p>
+
+
 
         <div className="hero-actions">
           <button className="primary" onClick={() => document.getElementById('case-list')?.scrollIntoView({ behavior: 'smooth' })}>
-            Explore the cases <Arrow/>
+            Explore the cases <Arrow />
           </button>
 
           <div className="hero-stepper" aria-label="Method sequence">
@@ -322,13 +318,13 @@ function Portfolio({ selectedId, setSelectedId }) {
         </div>
         <div className="mission-copy">
           <p>
-            We turn reported company emissions into a transparent, testable question: 
+            We turn reported company emissions into a transparent, testable question:
             <strong> what if an available technology delivered the same service with less climate impact?</strong>
           </p>
         </div>
         <div className="strip-metric">
           <strong>2/5</strong>
-          <span>annual<br/>metric ready</span>
+          <span>annual<br />metric ready</span>
         </div>
       </section>
 
@@ -347,7 +343,7 @@ function Portfolio({ selectedId, setSelectedId }) {
           <span className="stat-label">The rule</span>
           <strong>Unknown ≠ zero</strong>
           <p>No annual CO₂e number is assigned until the source denominator can be defended.</p>
-          <span className="ring"/>
+          <span className="ring" />
         </div>
       </section>
 
@@ -358,7 +354,7 @@ function Portfolio({ selectedId, setSelectedId }) {
           <p>Open a case to see the annual metric gate, evidence, and exact calculation.</p>
         </div>
         <div className="filter-tabs" role="tablist" aria-label="Filter cases">
-          {[['all','All cases'],['rankable','Annual metric'],['queue','Evidence queue']].map(([id, label]) => (
+          {[['all', 'All cases'], ['rankable', 'Annual metric'], ['queue', 'Evidence queue']].map(([id, label]) => (
             <button key={id} className={filter === id ? 'selected' : ''} onClick={() => setFilter(id)}>{label}</button>
           ))}
         </div>
@@ -367,14 +363,14 @@ function Portfolio({ selectedId, setSelectedId }) {
       <section className="portfolio-layout">
         <div className="case-list">
           {visibleCases.map((item, index) => (
-            <CaseCard key={item.id} item={item} index={index} selected={item.id === selected.id} onClick={() => setSelectedId(item.id)}/>
+            <CaseCard key={item.id} item={item} index={index} selected={item.id === selected.id} onClick={() => setSelectedId(item.id)} />
           ))}
           <div className="list-note">
             <span>i</span>
             <p>Percentages describe each case’s activity boundary. Normalized blocks are not whole-company totals and cases should not be summed.</p>
           </div>
         </div>
-        <CaseDetail item={selected} coverage={selectedCoverage} setCoverage={setCoverage} result={selectedResult}/>
+        <CaseDetail item={selected} coverage={selectedCoverage} setCoverage={setCoverage} result={selectedResult} />
       </section>
     </>
   );
@@ -399,7 +395,7 @@ function CaseCard({ item, index, selected, onClick }) {
       <div className="case-result">
         <span className="result-label">{item.metricStatus === 'rankable' ? 'At 50% coverage' : 'Annual metric'}</span>
         <strong>{item.metricStatus === 'rankable' ? formatNumber(result) : 'Pending'}<small>{item.metricStatus === 'rankable' ? ' tCO₂e / yr' : ' denominator'}</small></strong>
-        <span className="case-arrow"><Arrow/></span>
+        <span className="case-arrow"><Arrow /></span>
       </div>
     </button>
   );
@@ -439,7 +435,7 @@ function CaseDetail({ item, coverage, setCoverage, result }) {
         </div>
         {annualMetric ? (
           <>
-            <div className="gap-bar"><span style={{ width: `${Math.min(percent, 100)}%` }}/></div>
+            <div className="gap-bar"><span style={{ width: `${Math.min(percent, 100)}%` }} /></div>
             <div className="gap-foot">
               <span>{percent.toFixed(percent % 1 ? 1 : 0)}% improvement gap</span>
               <span>Baseline: {item.baseline}</span>
@@ -504,7 +500,7 @@ function CaseDetail({ item, coverage, setCoverage, result }) {
         {item.sources.map(([label, url]) => (
           <a href={url} target="_blank" rel="noreferrer" key={url}>
             {label}
-            <Arrow/>
+            <Arrow />
           </a>
         ))}
       </div>
@@ -525,8 +521,8 @@ function Method() {
   return (
     <>
       <section className="hero compact-hero">
-        <div className="eyebrow"><span className="eyebrow-line"/> The method</div>
-        <h1>Keep the claim<br/><em>inside the evidence.</em></h1>
+        <div className="eyebrow"><span className="eyebrow-line" /> The method</div>
+        <h1>Keep the claim<br /><em>inside the evidence.</em></h1>
         <p className="hero-copy">
           The gap is not an arbitrary rating. It is one strictly audited metric: the company’s reported source emissions translated through an alternative technology intensity and explicit coverage.
         </p>
@@ -534,7 +530,7 @@ function Method() {
 
       <section className="method-intro">
         <div className="formula-large">
-          Avoidable CO₂e / year<br/>
+          Avoidable CO₂e / year<br />
           <strong>= source × coverage × (1 − alternative ÷ current)</strong>
         </div>
         <div>
@@ -546,10 +542,10 @@ function Method() {
 
       <section className="method-grid">
         {[
-          ['01','Company source','Start with a reported annual emissions source tied directly to the activity being changed. Never use total corporate footprint as a proxy.'],
-          ['02','Alternative intensity','Identify a proven commercial technology that delivers identical service and calculate emissions per matching unit.'],
-          ['03','Coverage','Model only newly converted, eligible equipment. Treat coverage as a tested parameter, never an unverified assumption.'],
-          ['04','Net boundary','Subtract added burdens and display excluded lifecycle effects prominently. All gross results are explicitly labeled.']
+          ['01', 'Company source', 'Start with a reported annual emissions source tied directly to the activity being changed. Never use total corporate footprint as a proxy.'],
+          ['02', 'Alternative intensity', 'Identify a proven commercial technology that delivers identical service and calculate emissions per matching unit.'],
+          ['03', 'Coverage', 'Model only newly converted, eligible equipment. Treat coverage as a tested parameter, never an unverified assumption.'],
+          ['04', 'Net boundary', 'Subtract added burdens and display excluded lifecycle effects prominently. All gross results are explicitly labeled.']
         ].map(([number, title, body]) => (
           <div className="method-card" key={number}>
             <span className="step-no">{number}</span>
@@ -562,7 +558,7 @@ function Method() {
       <section className="guardrail">
         <div>
           <div className="eyebrow">Methodology guardrails</div>
-          <h2>Preventing persuasion<br/>from becoming distortion.</h2>
+          <h2>Preventing persuasion<br />from becoming distortion.</h2>
         </div>
         <div className="guardrail-list">
           <p><span>×</span> No process percentage is multiplied against a whole company footprint.</p>
@@ -574,50 +570,170 @@ function Method() {
   );
 }
 
-function Thesis() {
+const investableProjects = [
+  {
+    id: 'walmart',
+    name: 'Walmart',
+    ticker: 'WMT',
+    sector: 'Retail',
+    hue: 'blue',
+    mark: '✳',
+    opportunity: 'Finance refrigeration replacement and installation capacity.',
+    hasCase: true,
+  },
+  {
+    id: 'exxon',
+    name: 'ExxonMobil',
+    ticker: 'XOM',
+    sector: 'Energy',
+    hue: 'red',
+    mark: 'exxon',
+    opportunity: 'Finance eligible vapor recovery equipment with measured leak reduction.',
+    hasCase: true,
+  },
+  {
+    id: 'microsoft',
+    name: 'Microsoft',
+    ticker: 'MSFT',
+    sector: 'Technology',
+    hue: 'green',
+    mark: '▦',
+    opportunity: 'Identify suitable unconverted compute cohorts, then assess retrofit finance.',
+    hasCase: true,
+  },
+  {
+    id: 'nucor',
+    name: 'Nucor',
+    ticker: 'NUE',
+    sector: 'Steel',
+    hue: 'gold',
+    mark: 'N',
+    opportunity: 'Find comparable unoptimized furnaces and verify metered savings.',
+    hasCase: false,
+  },
+  {
+    id: 'jpmorgan',
+    name: 'JPMorgan Chase',
+    ticker: 'JPM',
+    sector: 'Financial services',
+    hue: 'blue',
+    mark: 'JPM',
+    opportunity: 'Originate asset-specific loans with measurable physical improvements and contracted repayment.',
+    hasCase: false,
+  },
+  {
+    id: 'ups',
+    name: 'UPS',
+    ticker: 'UPS',
+    sector: 'Logistics',
+    hue: 'gold',
+    mark: 'ups',
+    opportunity: 'Identify still-diesel routes with suitable payload, range and depot power, then assess vehicle and charging finance.',
+    hasCase: true,
+  },
+  {
+    id: 'delta',
+    name: 'Delta Air Lines',
+    ticker: 'DAL',
+    sector: 'Airlines',
+    hue: 'rose',
+    mark: 'Δ',
+    opportunity: 'Finance additional gate power, cooling and reliable connection where fuel savings cover electricity, upkeep and capital.',
+    hasCase: true,
+  },
+  {
+    id: 'duke',
+    name: 'Duke Energy',
+    ticker: 'DUK',
+    sector: 'Utilities',
+    hue: 'green',
+    mark: 'D',
+    opportunity: 'Screen untreated scheduled blowdowns for recovery equipment and service contracts.',
+    hasCase: false,
+  },
+];
+
+function BillionDollarQuestion({ onSelectCase }) {
   return (
     <>
       <section className="hero compact-hero">
-        <div className="eyebrow"><span className="eyebrow-line"/> From gap to action</div>
-        <h1>Fund the proof,<br/><em>then the rollout.</em></h1>
+        <div className="eyebrow"><span className="eyebrow-line" /> The billion-dollar question</div>
+        <h1>Fund the change.<br /><em>Bring the capital back.</em></h1>
         <p className="hero-copy">
-          The portfolio functions as a project sourcing engine. The investable asset is not an ESG score; it is the verified hardware, contracted emissions reduction, and additionality behind it.
+          The score is a starting point for finding projects. The investment decision asks which improvements our funding can enable—and how the principal can be repaid.
         </p>
       </section>
 
-      <section className="thesis-callout">
-        <div className="callout-big">
-          The opportunity<br/>
-          <em>is the next proof point.</em>
+      <section className="mandate-card">
+        <div className="mandate-inner">
+          <div className="mandate-badge"><span className="status-dot" /> The mandate</div>
+          <div className="mandate-head">$1,000,000,000</div>
+          <p className="mandate-copy">
+            Prioritize measurable additional impact while seeking to recover principal. No allocation is invented here: project costs, deployment constraints and repayable cashflows still need underwriting.
+          </p>
         </div>
-        <p>
-          Focus capital where reported sources, commercial alternatives, and transparent verification plans converge. Convert technical potential into contracted assets that generate verified impact.
-        </p>
       </section>
 
-      <section className="thesis-steps">
+      <div className="mandate-steps-grid">
         {[
-          ['01','Screen','Identify reported corporate burdens with credible, lower-intensity commercial alternatives.'],
-          ['02','Underwrite','Validate specific assets, net lifecycle balances, capital requirements, and counterfactual baselines.'],
-          ['03','Measure','Contract for metered physical outcomes and publish transparent, auditable project data.']
-        ].map(([number, title, body]) => (
-          <div className="thesis-step" key={number}>
-            <span>{number}</span>
+          ['01', 'Find a shared problem', 'Aggregate intervention types, not overlapping company inventories. Refrigerant replacement, methane recovery and industrial controls each point to different deployment needs.'],
+          ['02', 'Finance the bottleneck', 'Equipment loans, retrofit finance and installation capacity may deploy established technology. Startup equity adds technology, execution and capital-loss risk; it does not promise principal recovery.'],
+          ['03', 'Verify impact and repayment', 'Confirm asset eligibility, lifecycle savings, incremental adoption, implementation cost, savings or contracted revenue, and repayment timing before committing capital.']
+        ].map(([num, title, body]) => (
+          <div className="step-panel" key={num}>
+            <span className="step-panel-num">{num}</span>
             <h3>{title}</h3>
             <p>{body}</p>
           </div>
         ))}
-      </section>
+      </div>
 
-      <section className="portfolio-note">
-        <div className="eyebrow">Investment guardrail</div>
-        <h2>Environmental value is not cash repayment.</h2>
-        <p>
-          The ${valuation.toFixed(2)}/tCO₂e benchmark is an economic proxy for modeled future societal damage. It is not corporate liability or direct revenue. Every capital vehicle requires a separate cashflow model.
-        </p>
-        <div className="note-stat">
-          <strong>${valuation.toFixed(2)}</strong>
-          <span>per modeled tCO₂e<br/>2024 USD · screening only</span>
+      <section className="investable-section">
+        <div className="investable-header">
+          <span className="eyebrow">Project conversion</span>
+          <h2>From an opportunity to an investable project</h2>
+        </div>
+
+        <div className="investable-list">
+          {investableProjects.map((proj) => (
+            <div
+              key={proj.id}
+              className={`investable-row ${proj.hasCase ? 'clickable' : ''}`}
+              onClick={() => {
+                if (proj.hasCase) {
+                  onSelectCase(proj.id);
+                }
+              }}
+              role={proj.hasCase ? 'button' : undefined}
+              tabIndex={proj.hasCase ? 0 : undefined}
+              title={proj.hasCase ? `Open ${proj.name} case in portfolio` : `${proj.name} research summary`}
+            >
+              <div className="investable-row-left">
+                <div className={`company-mark ${proj.hue}`}>{proj.mark}</div>
+                <div className="investable-row-info">
+                  <div className="investable-title-line">
+                    <strong>{proj.name}</strong>
+                    <span className="investable-tag">{proj.ticker} · {proj.sector}</span>
+                    {proj.hasCase && <span className="portfolio-pill">Explore case</span>}
+                  </div>
+                  <p className="investable-opportunity">{proj.opportunity}</p>
+                </div>
+              </div>
+              <div className="investable-row-right">
+                <span className="investable-arrow"><Arrow /></span>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        <div className="notice-banner">
+          <div className="notice-icon">⚠</div>
+          <div className="notice-content">
+            <strong>Underwriting rule</strong>
+            <p>
+              Avoided societal damage is not cashflow. A project can have substantial environmental value and still lack a way to repay a loan. Impact per dollar, additionality and capital recovery must each be assessed separately.
+            </p>
+          </div>
         </div>
       </section>
     </>
@@ -632,20 +748,26 @@ export default function Page() {
   useEffect(() => {
     try {
       const saved = localStorage.getItem('gap-theme');
-      if (saved === 'dark' || saved === 'light') {
-        setTheme(saved);
-      } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+      if (saved === 'dark') {
         setTheme('dark');
+        document.documentElement.setAttribute('data-theme', 'dark');
+      } else {
+        // Unconditional default to Light Mode
+        setTheme('light');
+        document.documentElement.setAttribute('data-theme', 'light');
       }
-    } catch {}
+    } catch {
+      document.documentElement.setAttribute('data-theme', 'light');
+    }
   }, []);
 
   const handleToggleTheme = () => {
     const next = theme === 'dark' ? 'light' : 'dark';
     setTheme(next);
+    document.documentElement.setAttribute('data-theme', next);
     try {
       localStorage.setItem('gap-theme', next);
-    } catch {}
+    } catch { }
   };
 
   return (
@@ -658,7 +780,7 @@ export default function Page() {
           ) : view === 'method' ? (
             <Method />
           ) : (
-            <Thesis />
+            <BillionDollarQuestion onSelectCase={(id) => { setSelectedId(id); setView('portfolio'); }} />
           )}
         </div>
         <footer className="site-footer">
@@ -671,8 +793,8 @@ export default function Page() {
             </div>
             <div className="footer-status-col">
               <div className="footer-status-pills">
-                <Badge tone="live"><span className="status-dot"/> Research prototype</Badge>
-                <div className="evidence-pill"><span className="status-dot"/> Snapshot · 13 Sep 2026</div>
+                <Badge tone="live"><span className="status-dot" /> Research prototype</Badge>
+                <div className="evidence-pill"><span className="status-dot" /> Snapshot · 13 Sep 2026</div>
               </div>
               <p className="footer-case-summary">5 cases · 2 scale scenarios · 3 benchmark blocks</p>
             </div>
